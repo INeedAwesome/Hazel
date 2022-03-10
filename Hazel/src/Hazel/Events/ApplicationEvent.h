@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Hazel { 
 
 	class HAZEL_API WindowResizeEvent : public Event
@@ -18,7 +16,7 @@ namespace Hazel {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_width << ", " << m_height;
+			ss << "WindowResizeEvent: " << m_width << ", " << m_height;
 			return ss.str();
 		}
 
