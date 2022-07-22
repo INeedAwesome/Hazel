@@ -10,12 +10,12 @@ public:
 
 	void OnUpdate() override 
 	{
-		HZ_INFO("ExampleLayer::OnUpdate");
+		//HZ_INFO("ExampleLayer::OnUpdate");
 	}
 
 	void OnEvent(Hazel::Event& e) override
 	{
-		HZ_TRACE("{0}", e);
+		//HZ_INFO("{0}", e);
 	}
 
 private:
@@ -28,6 +28,8 @@ public:
 	Sandbox()
 	{ 
 		PushLayer(new ExampleLayer());
+		PushOverlay(new Hazel::ImGuiLayer());
+
 	}
 
 	~Sandbox()

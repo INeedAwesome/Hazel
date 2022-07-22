@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Hazel/Window.h"
+
 #include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
 
 namespace Hazel {
 
@@ -14,18 +14,18 @@ namespace Hazel {
 		virtual ~WindowsWindow();
 
 		void OnUpdate() override;
-		inline unsigned int GetWidth() const override { return m_data.Width; };
-		inline unsigned int GetHeight() const override { return m_data.Height; };
+		inline unsigned int GetWidth() const override { return m_Data.Width; };
+		inline unsigned int GetHeight() const override { return m_Data.Height; };
 
-		inline void SetEventCallback(const EventCallbackFn& callback) override { m_data.EventCallback = callback; };
+		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; };
 		void SetVSync(bool enabled) override;
-		bool IsVsync() const override;
+		bool IsVSync() const override;
 
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 
-		GLFWwindow* m_window;
+		GLFWwindow* m_Window;
 		struct WindowData
 		{
 			std::string Title;
@@ -35,7 +35,7 @@ namespace Hazel {
 			EventCallbackFn EventCallback;
 		};
 
-		WindowData m_data;
+		WindowData m_Data;
 	};
 }
 

@@ -3,15 +3,21 @@
 
 #include "Hazel/Log.h"
 #include "Events/ApplicationEvent.h"
+#include "Hazel/ImGui/ImGuiLayer.h"
 
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
 
 namespace Hazel {
 
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
+	Application* Application::s_Instance = nullptr;
+
 	Hazel::Application::Application()
 	{
+		HZ_CORE_ASSERT(!s_Instance, "Application already exists!")
+		s_Instance = this;
+
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 	}
@@ -41,8 +47,6 @@ namespace Hazel {
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
-		HZ_CORE_TRACE("{0}", e);
-
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
 			(*--it)->OnEvent(e);
@@ -53,17 +57,22 @@ namespace Hazel {
 
 	void Application::PushLayer(Layer* layer)
 	{
+		HZ_CORE_TRACE("Application::PushLayer: '{0}'", layer->GetName());
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
-	void Application::PushOverlay(Layer* overLay)
+	void Application::PushOverlay(Layer* overlay)
 	{
-		m_LayerStack.PushOverlay(overLay);
+		HZ_CORE_TRACE("Application::PushOverlay: '{0}'", overlay->GetName());
+		m_LayerStack.PushOverlay(overlay);
+		overlay->OnAttach();
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
+		HZ_CORE_INFO("Shutting down!");
 		return true;
 	}
 

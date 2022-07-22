@@ -14,7 +14,7 @@ namespace Hazel {
 		virtual void OnAttach() {} // like on init
 		virtual void OnDetach() {} // like on destroy/cleanup
 		virtual void OnUpdate() {}
-		virtual void OnEvent(Event& event) {}
+		virtual void OnEvent(Event& e) {}
 	
 		inline const std::string& GetName() const { return m_DebugName; }
 
