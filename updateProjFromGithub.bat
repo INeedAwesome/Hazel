@@ -11,3 +11,4 @@ git add *
 git commit -m "%message%"
 git remote add origin %httpsAddres%
 git push -u origin main
+PAUSE
