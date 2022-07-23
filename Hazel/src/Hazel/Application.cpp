@@ -2,10 +2,10 @@
 #include "Application.h"
 
 #include "Hazel/Log.h"
-#include "Events/ApplicationEvent.h"
-#include "Hazel/ImGui/ImGuiLayer.h"
 
 #include <glad/glad.h>
+#include "Hazel/Input.h"
+#include <GLFW/glfw3.h>
 
 namespace Hazel {
 
@@ -15,7 +15,7 @@ namespace Hazel {
 
 	Hazel::Application::Application()
 	{
-		HZ_CORE_ASSERT(!s_Instance, "Application already exists!")
+		HZ_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
 		m_Window = std::unique_ptr<Window>(Window::Create());
@@ -40,6 +40,8 @@ namespace Hazel {
 
 			m_Window->OnUpdate();
 		}
+
+		glfwTerminate();
 	}
 
 	void Application::OnEvent(Event& e)
