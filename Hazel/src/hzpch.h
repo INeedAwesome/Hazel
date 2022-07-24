@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef _CRT_SECURE_NO_WARNINGS
+	#define _CRT_SECURE_NO_WARNINGS
+#endif // _CRT_SECURE_NO_WARNINGS
+
+
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -11,6 +16,8 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+
+#undef _CRT_SECURE_NO_WARNINGS
 
 #include "Hazel/Core.h"
 #include "Hazel/Log.h"
