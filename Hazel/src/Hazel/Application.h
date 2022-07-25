@@ -9,6 +9,9 @@
 
 #include "Hazel/ImGui/ImGuiLayer.h"
 
+#include "Hazel/Renderer/Shader.h"
+#include "Hazel/Renderer/Buffer.h"
+
 namespace Hazel {
 
 	class Application
@@ -25,8 +28,11 @@ namespace Hazel {
 		inline static Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
 
+		inline void StopRunning() { Stop(); }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		void Stop();
 
 	private:
 		static Application* s_Instance;
@@ -35,6 +41,13 @@ namespace Hazel {
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+
+		unsigned int m_VertexArray;
+		
+		std::unique_ptr<Shader> m_Shader;
+		std::unique_ptr<VertexBuffer> m_VertexBuffer;
+		std::unique_ptr<IndexBuffer> m_IndexBuffer;
+
 	};
 
 	// To be defined in CLIENT

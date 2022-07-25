@@ -1,66 +1,52 @@
-#include <Hazel.h>
+#include "SandboxApp.h"
 
 #include "imgui/imgui.h"
 
+#include "GLFW/include/GLFW/glfw3.h"
 
-class ExampleLayer : public Hazel::Layer
+
+ExampleLayer::ExampleLayer()
+	: Layer("SandboxApp")
 {
-public:
-	ExampleLayer()
-		: Layer("Example")
-	{
-	}
+}
 
-	void OnUpdate() override 
+void ExampleLayer::OnUpdate()
+{
+	
+}
+
+void ExampleLayer::OnImGuiRender()
+{
+	ImGui::Begin("Sandbox App!");
+	ImGui::ColorEdit4("Color", colors);
+	ImGui::End();
+}
+
+void ExampleLayer::OnEvent(Hazel::Event& e)
+{
+	if (e.GetEventType() == Hazel::EventType::KeyPressed) // checks for keyPressed events
 	{
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_TAB)) 
+		Hazel::KeyPressedEvent& event = (Hazel::KeyPressedEvent&)e; // convert to keyPressedEvent
+		if (event.GetKeyCode() == HZ_KEY_ESCAPE) // if key is escape
 		{
-			HZ_TRACE("Tab key is pressed");
-		}
-
-	}
-
-	virtual void OnImGuiRender() override
-	{
-		ImGui::Begin("Test");
-		ImGui::Text("Hello World");
-		ImGui::End();
-	}
-
-	void OnEvent(Hazel::Event& e) override
-	{
-		if (e.GetEventType() == Hazel::EventType::KeyPressed)
-		{
-			Hazel::KeyPressedEvent& event = (Hazel::KeyPressedEvent&)e;
-			HZ_TRACE("{0}", (char)event.GetKeyCode());
-			if (event.GetKeyCode() == HZ_KEY_ESCAPE)
-			{
-				auto& app = Hazel::Application::Get();
-				app.OnEvent(Hazel::WindowCloseEvent);
-			}
+			Hazel::Application& app = Hazel::Application::Get(); // get application
+			app.StopRunning(); // stop app
 		}
 	}
+}
 
-private:
-
-};
-
-class Sandbox : public Hazel::Application 
-{
-public:
-	Sandbox()
-	{ 
-		PushLayer(new ExampleLayer());
-	}
-
-	~Sandbox()
-	{
-		
-	}
-
-};
 
 Hazel::Application* Hazel::CreateApplication()
 { 
 	return new Sandbox();
+}
+
+Sandbox::Sandbox()
+{
+	PushLayer(new ExampleLayer());
+}
+
+Sandbox::~Sandbox()
+{
+
 }

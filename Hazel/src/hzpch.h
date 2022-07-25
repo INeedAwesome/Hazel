@@ -17,8 +17,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#undef _CRT_SECURE_NO_WARNINGS
-
 #include "Hazel/Core.h"
 #include "Hazel/Log.h"
 
