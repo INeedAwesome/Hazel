@@ -34,7 +34,6 @@ namespace Hazel {
 
 		HZ_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-
 		if (!s_GLFWInitialized)
 		{
 			// TODO : implement a way to terminate glfw
@@ -47,10 +46,10 @@ namespace Hazel {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 
+		HZ_CORE_ASSERT(m_Window, "Could not create GLFW window!");
+
 		m_Context = new OpenGLContext(m_Window);
-		m_Context->Init();//			   <-
-		//									 |
-		 // |
+		m_Context->Init();
 		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
@@ -130,20 +129,20 @@ namespace Hazel {
 			}
 		});
 
-	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
-	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-		MouseScrolledEvent event((float)xOffset, (float)yOffset);
-		data.EventCallback(event);
-	});
+			MouseScrolledEvent event((float)xOffset, (float)yOffset);
+			data.EventCallback(event);
+		});
 
-	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
-	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-		MouseMovedEvent event((float)xPos, (float)yPos);
-		data.EventCallback(event);
-	});
+		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			MouseMovedEvent event((float)xPos, (float)yPos);
+			data.EventCallback(event);
+		});
 	}
 
 	void WindowsWindow::Shutdown()

@@ -4,7 +4,6 @@
 
 #include "GLFW/include/GLFW/glfw3.h"
 
-
 ExampleLayer::ExampleLayer()
 	: Layer("SandboxApp")
 {
@@ -32,6 +31,11 @@ void ExampleLayer::OnEvent(Hazel::Event& e)
 			Hazel::Application& app = Hazel::Application::Get(); // get application
 			app.StopRunning(); // stop app
 		}
+	}
+	if (e.GetEventType() == Hazel::EventType::WindowResize)
+	{
+		Hazel::WindowResizeEvent& event = (Hazel::WindowResizeEvent&)e; // convert event to WindowResizeEvent
+		glViewport(0, 0, event.GetWidth(), event.GetHeight());
 	}
 }
 

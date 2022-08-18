@@ -7,7 +7,7 @@ namespace Hazel {
 
 #pragma region OpenGLVertexBuffer
 
-	Hazel::OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, unsigned int size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, unsigned int size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
