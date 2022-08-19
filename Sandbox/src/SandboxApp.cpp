@@ -4,6 +4,11 @@
 
 #include "GLFW/include/GLFW/glfw3.h"
 
+Hazel::Application* Hazel::CreateApplication()
+{ 
+	return new Sandbox();
+}
+
 ExampleLayer::ExampleLayer()
 	: Layer("SandboxApp")
 {
@@ -16,13 +21,11 @@ void ExampleLayer::OnUpdate()
 
 void ExampleLayer::OnImGuiRender()
 {
-	ImGui::Begin("Sandbox App!");
-	ImGui::ColorEdit4("Color", colors);
-	ImGui::End();
 }
 
 void ExampleLayer::OnEvent(Hazel::Event& e)
 {
+
 	if (e.GetEventType() == Hazel::EventType::KeyPressed) // checks for keyPressed events
 	{
 		Hazel::KeyPressedEvent& event = (Hazel::KeyPressedEvent&)e; // convert to keyPressedEvent
@@ -40,10 +43,6 @@ void ExampleLayer::OnEvent(Hazel::Event& e)
 }
 
 
-Hazel::Application* Hazel::CreateApplication()
-{ 
-	return new Sandbox();
-}
 
 Sandbox::Sandbox()
 {

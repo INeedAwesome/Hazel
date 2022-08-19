@@ -13,6 +13,9 @@
 #include "Hazel/Renderer/Buffer.h"
 #include "Hazel/Renderer/VertexArray.h"
 
+
+#include "Hazel/Renderer/OrthographicCamera.h"
+
 namespace Hazel {
 
 	class Application
@@ -48,6 +51,8 @@ namespace Hazel {
 
 		std::shared_ptr<Shader> m_SquareShader;
 		std::shared_ptr<VertexArray> m_SquareVertexArray;
+
+		OrthographicCamera m_Camera;
 	};
 
 	// To be defined in CLIENT

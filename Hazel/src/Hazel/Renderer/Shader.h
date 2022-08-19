@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+
 namespace Hazel {
 	class Shader 
 	{
@@ -11,6 +13,9 @@ namespace Hazel {
 
 		void Bind();
 		void Unbind();
+
+		void UploadUniform(const std::string& name, const glm::mat4& matrix);
+		void UploadUniform(const std::string& name, const glm::mat3& matrix);
 
 	private:
 		unsigned int m_RendererID;
