@@ -6,6 +6,10 @@
 #include "Hazel/Events/KeyEvent.h"
 
 #include "Platform/OpenGL/OpenGLContext.h"
+#include "Platform/DirectX12/DirectX12Context.h"
+
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include "GLFW/glfw3native.h"
 
 namespace Hazel {
 
@@ -32,7 +36,7 @@ namespace Hazel {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		HZ_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+		HZ_CORE_INFO("Creating window {0} ({1}, {2}) with {3}", props.Title, props.Width, props.Height, RendererAPI::GetAPIName());
 
 		if (!s_GLFWInitialized)
 		{
@@ -43,18 +47,27 @@ namespace Hazel {
 		}
 
 		glfwWindowHint(GLFW_SAMPLES, 8);
+		if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+		
+		else if (RendererAPI::GetAPI() == RendererAPI::API::DirectX12)
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-
+		m_HWND = glfwGetWin32Window(m_Window);
 		HZ_CORE_ASSERT(m_Window, "Could not create GLFW window!");
+		switch (RendererAPI::GetAPI())
+		{
+			case RendererAPI::API::None:		{ m_Context = new OpenGLContext(m_Window);		break; }
+			case RendererAPI::API::OpenGL:		{ m_Context = new OpenGLContext(m_Window);		break; }
+			case RendererAPI::API::DirectX12:	{ m_Context = new DirectX12Context(m_HWND);	break; }
 
-		m_Context = new OpenGLContext(m_Window);
+		}
 		m_Context->Init();
 		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
 		SetVSync(true);
-		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)

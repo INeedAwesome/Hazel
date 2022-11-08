@@ -7,14 +7,9 @@
 #include "Hazel/Events/Event.h"
 #include "Hazel/Events/ApplicationEvent.h"
 
+#include "Hazel/Core/Timestep.h"
+
 #include "Hazel/ImGui/ImGuiLayer.h"
-
-#include "Hazel/Renderer/Shader.h"
-#include "Hazel/Renderer/Buffer.h"
-#include "Hazel/Renderer/VertexArray.h"
-
-
-#include "Hazel/Renderer/OrthographicCamera.h"
 
 namespace Hazel {
 
@@ -22,7 +17,7 @@ namespace Hazel {
 	{
 	public:
 		Application();
-		virtual ~Application();
+		virtual ~Application() {}
 
 		void Run();
 		void OnEvent(Event& e);
@@ -36,6 +31,7 @@ namespace Hazel {
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 		void Stop();
 
 	private:
@@ -45,14 +41,9 @@ namespace Hazel {
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-		
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexArray> m_VertexArray;
 
-		std::shared_ptr<Shader> m_SquareShader;
-		std::shared_ptr<VertexArray> m_SquareVertexArray;
-
-		OrthographicCamera m_Camera;
+		float m_LastFrameTime = 0.0f;
+	
 	};
 
 	// To be defined in CLIENT

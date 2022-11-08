@@ -76,7 +76,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>hzpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HZ_PLATFORM_WINDOWS;HZ_BUILD_DLL;GLFW_INCLUDE_NONE;HZ_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HZ_PLATFORM_WINDOWS;HZ_BUILD_DLL;GLFW_INCLUDE_NONE;HZ_DEBUG;HZ_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -140,9 +140,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\DirectX12\DirectX12RendererAPI.h" />
+    <ClInclude Include="src\Platform\DirectX12\DirectX12Context.h" />
     <ClInclude Include="src\Hazel.h" />
     <ClInclude Include="src\Hazel\Application.h" />
     <ClInclude Include="src\Hazel\Core.h" />
+    <ClInclude Include="src\Hazel\Core\Timestep.h" />
     <ClInclude Include="src\Hazel\EntryPoint.h" />
     <ClInclude Include="src\Hazel\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Hazel\Events\Event.h" />
@@ -588,6 +591,8 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DirectX12\DirectX12RendererAPI.cpp" />
+    <ClCompile Include="src\Platform\DirectX12\DirectX12Context.cpp" />
     <ClCompile Include="src\Hazel\Application.cpp" />
     <ClCompile Include="src\Hazel\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Hazel\ImGui\ImGuiLayer.cpp" />

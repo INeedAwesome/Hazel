@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_dx12.h"
 
 #include "Hazel/Application.h"
 
@@ -50,8 +51,14 @@ namespace Hazel {
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
 		// Setup Platform/Renderer bindings
+#ifdef HZ_DIRECTX12
+		ImGui_ImplGlfw_InitForOther(window, true);
+		// ImGui_ImplDX12_Init()
+#endif // HZ_DIRECTX12
+#ifdef HZ_OPENGL
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
+#endif // HZ_OPENGL
 
 		ImGui::LoadIniSettingsFromDisk("imgui.ini");
 	}

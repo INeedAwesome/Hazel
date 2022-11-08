@@ -5,9 +5,10 @@
 
 #include <imgui.h>
 #include "Hazel/Input.h"
-#include <GLFW/glfw3.h>
 
 #include "Hazel/Renderer/Renderer.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Hazel {
 
@@ -16,161 +17,31 @@ namespace Hazel {
 	Application* Application::s_Instance = nullptr;
 
 	Hazel::Application::Application()
-		: m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
 	{
 		HZ_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-
+		
+		WindowProps propsDefault("Hazel Engine", 1280, 720);
 		WindowProps props("Hazel Engine", 1920, 1080);
-		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window = std::unique_ptr<Window>(Window::Create(propsDefault));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window->SetVSync(true);
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
-#pragma region triangle
-
-		float vertices[3 * 7] = {
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 
-			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
-		};
-
-		m_VertexArray.reset(VertexArray::Create());
-		std::shared_ptr<VertexBuffer> vertexBuffer;
-		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-		BufferLayout layout = {
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" }
-		};
-		vertexBuffer->SetLayout(layout);
-		m_VertexArray->AddVertexBuffer(vertexBuffer);
-
-		unsigned int indices[3] = { 0, 1, 2 };
-		std::shared_ptr<IndexBuffer> indexBuffer;
-		indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int)));
-		m_VertexArray->SetIndexBuffer(indexBuffer);
-
-#pragma endregion
-
-#pragma region square
-
-		m_SquareVertexArray.reset(VertexArray::Create());
-		float sqaureVertices[3 * 4] = {
-			 -0.75f, -0.75f, 0.0f,
-			  0.75f, -0.75f, 0.0f,
-			  0.75f,  0.75f, 0.0f,
-			 -0.75f,  0.75f, 0.0f
-		};
-		std::shared_ptr<VertexBuffer> squareVertexBuffer;
-		squareVertexBuffer.reset(VertexBuffer::Create(sqaureVertices, sizeof(sqaureVertices)));
-		squareVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" }
-		});
-		m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
-
-		unsigned int sqaureIndices[6] = { 0, 1, 2, 2, 3, 0};
-		std::shared_ptr<IndexBuffer> squareIndexBuffer;
-		squareIndexBuffer.reset(IndexBuffer::Create(sqaureIndices, sizeof(sqaureIndices) / sizeof(unsigned int)));
-		m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
-
-#pragma endregion
-
-#pragma region triangle Source
-
-		std::string vertexSource = R"(
-			#version 330 core
-			
-			layout (location = 0) in vec3 a_Position;
-			layout (location = 1) in vec4 a_Color;
-
-			out vec3 v_Position;
-			out vec4 v_Color;
-			
-			uniform mat4 u_ViewProjection;
-
-			void main() {
-				v_Position = a_Position;
-				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1);
-			}
-		)";
-		std::string fragmentSource = R"(
-			#version 330 core
-			
-			layout (location = 0) out vec4 o_Color;
-
-			in vec3 v_Position;
-			in vec4 v_Color;
-			
-			void main() {
-				//color = vec4(v_Position * 0.5 + 0.5, 1.0);
-				o_Color = v_Color;
-			}
-		)";
-
-		m_Shader.reset(new Shader(vertexSource, fragmentSource));
-
-#pragma endregion
-
-#pragma region square Source
-
-		std::string sqaureVertexSource = R"(
-			#version 330 core
-			
-			layout (location = 0) in vec3 a_Position;
-
-			out vec3 v_Position;
-
-			uniform mat4 u_ViewProjection;
-
-			void main() {
-				v_Position = a_Position;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1);
-			}
-		)";
-		std::string sqaureFragmentSource = R"(
-			#version 330 core
-			
-			layout (location = 0) out vec4 o_Color;
-
-			in vec3 v_Position;
-			
-			void main() {
-				o_Color = vec4(0.2, 0.3, 1.0, 1.0); 
-			}
-
-		)";
-
-		m_SquareShader.reset(new Shader(sqaureVertexSource, sqaureFragmentSource));
-
-#pragma endregion
-
-	}
-
-	Hazel::Application::~Application()
-	{
 	}
 
 	void Application::Run()
 	{ 
 		while (m_Running)
 		{
-			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-			RenderCommand::Clear();
+			float time = (float)glfwGetTime(); // platform::GetTime
+			Timestep timestep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
 
-			m_Camera.SetRotation(45);
-
-			Renderer::BeginScene(m_Camera);
-
-			Renderer::Submit(m_SquareShader, m_SquareVertexArray);
-
-			Renderer::Submit(m_Shader, m_VertexArray);
-
-			Renderer::EndScene();
-		
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(timestep);
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
@@ -188,6 +59,7 @@ namespace Hazel {
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -214,6 +86,12 @@ namespace Hazel {
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		Stop();
+		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		RenderCommand::Resize(e.GetWidth(), e.GetHeight());
 		return true;
 	}
 

@@ -22,7 +22,17 @@ namespace Hazel {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
-		inline virtual void* GetNativeWindow() const { return m_Window; }
+		inline virtual void* GetNativeWindow() const 
+		{ 
+			switch (RendererAPI::GetAPI())
+			{
+			case RendererAPI::API::None: return nullptr; break;
+			case RendererAPI::API::OpenGL: return m_Window; break;
+			case RendererAPI::API::DirectX12: return m_HWND; break;
+			default:
+				break;
+			}
+		}
 
 	private:
 		virtual void Init(const WindowProps& props);
@@ -30,13 +40,13 @@ namespace Hazel {
 
 		GLFWwindow* m_Window;
 		GraphicsContext* m_Context;
+		HWND m_HWND;
 
 		struct WindowData
 		{
 			std::string Title;
 			unsigned int Width, Height;
 			bool VSync;
-
 			EventCallbackFn EventCallback;
 		};
 

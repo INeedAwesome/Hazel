@@ -4,6 +4,7 @@
 
 #include "Hazel/Core.h"
 #include "Hazel/Events/Event.h"
+#include "Hazel/Renderer/RendererAPI.h"
 
 namespace Hazel { 
 
@@ -15,7 +16,7 @@ namespace Hazel {
 
 		WindowProps(const std::string& title = "Hazel Engine",
 			unsigned int width = 1280,
-			unsigned int height = 720)
+			unsigned int height = 720 )
 			: Title(title), Width(width), Height(height)
 		{
 		}
