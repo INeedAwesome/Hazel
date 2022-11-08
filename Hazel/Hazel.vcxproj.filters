@@ -1454,4 +1454,7 @@
     <ClCompile Include="src\Platform\DirectX12\DirectX12Context.cpp" />
     <ClCompile Include="src\Platform\DirectX12\DirectX12RendererAPI.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
 </Project>

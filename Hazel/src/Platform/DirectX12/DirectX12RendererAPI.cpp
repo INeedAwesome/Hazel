@@ -1,7 +1,6 @@
 #include "hzpch.h"
 #include "DirectX12RendererAPI.h"
 
-
 void Hazel::DirectX12RendererAPI::SetClearColor(const glm::vec4& color)
 {
 }

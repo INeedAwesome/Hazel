@@ -3,53 +3,103 @@
 
 #include "Platform/Windows/WindowsWindow.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Hazel {
 
 	DirectX12Context::DirectX12Context(HWND windowHandle)
-		: m_HWND(windowHandle)
+		: g_HWND(windowHandle)
 	{
 		HZ_CORE_ASSERT(windowHandle, "Window handle is null!");
 	}
 
 	void Hazel::DirectX12Context::Init()
 	{
+		DXGI_SWAP_CHAIN_DESC1 scd;
+		{
+			ZeroMemory(&scd, sizeof(scd));
+			scd.Width = 0;
+			scd.Height = 0;
+			scd.Format = DXGI_FORMAT_B5G6R5_UNORM;
+			scd.Stereo = false;
+			scd.SampleDesc.Count = 1;
+			scd.SampleDesc.Quality = 0;
+			scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+			scd.BufferCount = NUM_FRAME_BUFFERS;
+			scd.Scaling = DXGI_SCALING_ASPECT_RATIO_STRETCH;
+			scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+			scd.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+			scd.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+		}
 
-		HRESULT hr;
+#if HZ_DEBUG
+		ID3D12Debug* pDx12Debug = NULL;
+		if (D3D12GetDebugInterface(IID_PPV_ARGS(&pDx12Debug)))
+		{
+			pDx12Debug->EnableDebugLayer();
+		}
 
-		DXGI_MODE_DESC bufferDesc = { 0 };
-		bufferDesc.Width = 1280;
-		bufferDesc.Height = 720;
-		bufferDesc.RefreshRate = { 60, 1 };
-		bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		if (pDx12Debug)
+		{
+			ID3D12InfoQueue* pInfoQueue = NULL;
+			g_pD3D12Device->QueryInterface(IID_PPV_ARGS(&pInfoQueue));
+			pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+			pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+			pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+			pInfoQueue->Release();
+			pDx12Debug->Release();
+		}
+#endif // HZ_DEBUG
 
-		DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
-		swapChainDesc.BufferDesc = bufferDesc;
-		swapChainDesc.SampleDesc.Count = 1;
-		swapChainDesc.SampleDesc.Quality = 0;
-		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDesc.BufferCount = 1;
-		swapChainDesc.OutputWindow = m_HWND;
-		swapChainDesc.Windowed = true;
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_12_0;
+		HZ_CORE_ASSERT(D3D12CreateDevice(NULL, featureLevel, IID_PPV_ARGS(&g_pD3D12Device)), "Could not create DirectX12 device!");
 
-		hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &swapChainDesc, &m_SwapChain, &m_D3D11Device, NULL, &m_D3D11DevCon);
+		D3D12_DESCRIPTOR_HEAP_DESC dhdesc;
+		{
+			ZeroMemory(&dhdesc, sizeof(dhdesc));
+			dhdesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+			dhdesc.NumDescriptors = NUM_FRAME_BUFFERS;
+			dhdesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+			dhdesc.NodeMask = 1;
+		}
+		HZ_CORE_ASSERT(g_pD3D12Device->CreateDescriptorHeap(&dhdesc, IID_PPV_ARGS(&g_pD3DRtvDescHeap)), "Could not create descriptor heap type: D3D12_DESCRIPTOR_HEAP_TYPE_RTV!");
 
-		ID3D11Texture2D* backBuffer;
-		hr = m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
+		unsigned __int64 rtvDescSize = g_pD3D12Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = g_pD3DRtvDescHeap->GetCPUDescriptorHandleForHeapStart();
 
-		hr = m_D3D11Device->CreateRenderTargetView(backBuffer, NULL, &m_RenderTargetView);
-		backBuffer->Release();
-		m_D3D11DevCon->OMSetRenderTargets(1, &m_RenderTargetView, NULL);
+		for (int i = 0; i < NUM_FRAME_BUFFERS; i++)
+		{
+			g_mainRenderTargetDescriptor[i] = rtvHandle;
+			rtvHandle.ptr += rtvDescSize;
+		}
+
+		// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_descriptor_heap_type
+		D3D12_DESCRIPTOR_HEAP_DESC dhDesc1 = {};
+		{
+			// The descriptor heap for the combination of constant-buffer, shader-resource, and unordered-access views.
+			dhDesc1.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+			dhDesc1.NumDescriptors = 1;
+			dhDesc1.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		}
+		HZ_CORE_ASSERT(g_pD3D12Device->CreateDescriptorHeap(&dhDesc1, IID_PPV_ARGS(&g_pd3dSrvDescHeap)), "Could not create descriptor heap type: D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV!");
+	
+
+		D3D12_COMMAND_QUEUE_DESC cqdesc = {};
+		{
+			cqdesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+			cqdesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_HIGH;
+			cqdesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+			cqdesc.NodeMask = 1;
+		}
+		HZ_CORE_ASSERT(g_pD3D12Device->CreateCommandQueue(&cqdesc, IID_PPV_ARGS(&g_pD3D12CommandQueue)), "Could not create DirectX12 command queue!");
+
+
+		for (int i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
+			HZ_CORE_ASSERT(g_pD3D12Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&g_frameContext[i].CommandAllocator)), "");
+
 
 	}
 
 	void Hazel::DirectX12Context::SwapBuffers()
 	{
-		m_SwapChain->Present(0, 0);
 
 	}
 }

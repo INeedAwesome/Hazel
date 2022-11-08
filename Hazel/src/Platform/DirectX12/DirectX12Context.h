@@ -2,14 +2,14 @@
 
 #include "Hazel/Renderer/GraphicsContext.h"
 
-#pragma comment(lib, "d3d11.lib")
+#include <d3d12.h>
+#include <dxgi1_4.h>
+#pragma comment(lib,"d3d12.lib")
 
-#include <d3d11.h>
-#include <DirectXMath.h>
-
-#define __cplusplus
-#include <dxgi1_6.h>
-#include <d3dcompiler.h>
+#ifdef HZ_DEBUG
+#include <dxgidebug.h>
+#pragma comment(lib, "dxguid.lib")
+#endif
 
 namespace Hazel {
 
@@ -21,13 +21,20 @@ namespace Hazel {
 		virtual void Init() override;
 		virtual void SwapBuffers() override;
 
+		static const int NUM_FRAME_BUFFERS = 3;
+		static const int NUM_FRAMES_IN_FLIGHT = 3;
+		HWND g_HWND;
+		static IDXGISwapChain3* g_pSwapChain;
+		static ID3D12Device* g_pD3D12Device;
+		static ID3D12CommandQueue* g_pD3D12CommandQueue;
+		static ID3D12GraphicsCommandList* g_pD3D12CommandList;
+	
+		static ID3D12DescriptorHeap* g_pD3DRtvDescHeap;
+		static ID3D12DescriptorHeap* g_pd3dSrvDescHeap;
+		static D3D12_CPU_DESCRIPTOR_HANDLE g_mainRenderTargetDescriptor[NUM_FRAME_BUFFERS];
 	private:
-		HWND m_HWND;
 
-		IDXGISwapChain* m_SwapChain;
-		ID3D11Device* m_D3D11Device;
-		ID3D11DeviceContext* m_D3D11DevCon;
-		ID3D11RenderTargetView* m_RenderTargetView;
+
 	};
 
 }

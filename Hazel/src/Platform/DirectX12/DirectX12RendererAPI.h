@@ -2,14 +2,7 @@
 
 #include "Hazel/Renderer/RendererAPI.h"
 
-#pragma comment(lib, "d3d11.lib")
-
-#include <d3d11.h>
-#include <DirectXMath.h>
-
-#define __cplusplus
-#include <dxgi1_6.h>
-#include <d3dcompiler.h>
+#include "Platform/DirectX12/DirectX12Context.h"
 
 namespace Hazel {
 
