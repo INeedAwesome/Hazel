@@ -1,13 +1,13 @@
 #pragma once
 
-#ifdef HZ_PLATFORM_WINDOWS	
+#ifdef HZ_PLATFORM_WINDOWS
 
 extern Hazel::Application* Hazel::CreateApplication();
 	
 int main(int argc, char** argv)
 {
 	Hazel::Log::Init();
-	HZ_CORE_WARN("Initialized Core Logger! ");
+	HZ_CORE_INFO("Initialized Core Logger! "); 
 	HZ_TRACE("Initialized Client Logger! ");
 
 	auto app = Hazel::CreateApplication();

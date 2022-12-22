@@ -20,7 +20,7 @@ Sandbox::~Sandbox()
 ExampleLayer::ExampleLayer()
 	: Layer("SandboxApp"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0, 0, 0)
 {
-	/*
+	
 #pragma region triangle
 
 	float vertices[3 * 7] = {
@@ -138,14 +138,14 @@ ExampleLayer::ExampleLayer()
 	m_SquareShader.reset(new Hazel::Shader(sqaureVertexSource, sqaureFragmentSource));
 
 #pragma endregion
-*/
+
 }
 
 void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 {
-	HZ_TRACE("Delta Time: {0}s,	({1}ms),	fps:{2}", ts.GetSeconds(), ts.GetMilliseconds(), ts.GetMilliseconds()*5000);
+	//HZ_TRACE("Delta Time: {0}s,	({1}ms),	fps:{2}", ts.GetSeconds(), ts.GetMilliseconds(), ts.GetMilliseconds()*5000);
 
-	/*
+	
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
 		m_CameraPosition.x -= m_CameraSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
@@ -156,16 +156,16 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
 		m_CameraPosition.y += m_CameraSpeed * ts;
 
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
+/*	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
 		m_CameraRotation += m_CameraRotationSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
-		m_CameraRotation -= m_CameraRotationSpeed * ts;
+		m_CameraRotation -= m_CameraRotationSpeed * ts;			*/
 
-	*/
+	
 
 	Hazel::RenderCommand::SetClearColor({ m_BGColor[0], m_BGColor[1], m_BGColor[2], m_BGColor[3] });
 	Hazel::RenderCommand::Clear();
-	/*
+	
 	m_Camera.SetPosition(m_CameraPosition);
 	m_Camera.SetRotation(m_CameraRotation);
 
@@ -173,7 +173,7 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 
 	Hazel::Renderer::Submit(m_SquareShader, m_SquareVertexArray);
 	Hazel::Renderer::Submit(m_Shader, m_VertexArray);
-	*/
+	
 	Hazel::Renderer::EndScene();
 }
 
