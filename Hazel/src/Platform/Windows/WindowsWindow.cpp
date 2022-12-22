@@ -6,10 +6,7 @@
 #include "Hazel/Events/KeyEvent.h"
 
 #include "Platform/OpenGL/OpenGLContext.h"
-#include "Platform/DirectX12/DirectX12Context.h"
-
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include "GLFW/glfw3native.h"
+#include "Platform/DirectX11/DirectX11Context.h"
 
 namespace Hazel {
 
@@ -50,20 +47,19 @@ namespace Hazel {
 		if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		
-		else if (RendererAPI::GetAPI() == RendererAPI::API::DirectX12)
+		else if (RendererAPI::GetAPI() == RendererAPI::API::DirectX11)
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		m_HWND = glfwGetWin32Window(m_Window);
 		HZ_CORE_ASSERT(m_Window, "Could not create GLFW window!");
 		switch (RendererAPI::GetAPI())
 		{
 			case RendererAPI::API::None:		{ m_Context = new OpenGLContext(m_Window);		break; }
 			case RendererAPI::API::OpenGL:		{ m_Context = new OpenGLContext(m_Window);		break; }
-			case RendererAPI::API::DirectX12:	{ m_Context = new DirectX12Context(m_HWND);	break; }
+			case RendererAPI::API::DirectX11:	{ m_Context = new DirectX11Context(m_Window);	break; }
 
 		}
-		m_Context->Init();
+		m_Context->Init(props);
 		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 

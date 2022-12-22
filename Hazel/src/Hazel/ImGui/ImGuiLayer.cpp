@@ -2,10 +2,17 @@
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "backends/imgui_impl_dx12.h"
-#include "backends/imgui_impl_win32.h"
+#ifdef HZ_DIRECTX11
+	#include "backends/imgui_impl_dx11.h"
+	#include "backends/imgui_impl_win32.h"
+	
+	#include "Platform/DirectX11/DirectX11HeaderInstance.h"
+#endif // HZ_DIRECTX11
+
+#ifdef HZ_OPENGL
+	#include "backends/imgui_impl_glfw.h"
+	#include "backends/imgui_impl_opengl3.h"
+#endif // HZ_OPENGL
 
 #include "Hazel/Application.h"
 
@@ -15,7 +22,7 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
-#include "Platform/DirectX12/DirectX12Context.h"
+
 namespace Hazel {
 
 	ImGuiLayer::ImGuiLayer()
@@ -55,15 +62,10 @@ namespace Hazel {
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 		HWND hwnd = glfwGetWin32Window(window);
 
-		
-
 		// Setup Platform/Renderer bindings
-#ifdef HZ_DIRECTX12
+#ifdef HZ_DIRECTX11
 		ImGui_ImplWin32_Init(hwnd);
-		ImGui_ImplDX12_Init(DirectX12Context::g_pD3D12Device, 3,
-					DXGI_FORMAT_R8G8B8A8_UNORM, DirectX12Context::g_pd3dSrvDescHeap,
-			DirectX12Context::g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(),
-			DirectX12Context::g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
+		ImGui_ImplDX11_Init(m_D3DInstance->GetInstance().m_d3d11Device, m_D3DInstance->GetInstance().m_d3dDeviceContext);
 #endif // HZ_DIRECTX12
 #ifdef HZ_OPENGL
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -77,8 +79,8 @@ namespace Hazel {
 	{
 		ImGui::SaveIniSettingsToDisk("imgui.ini");
 
-#ifdef HZ_DIRECTX12
-		ImGui_ImplDX12_Shutdown();
+#ifdef HZ_DIRECTX11
+		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 #endif // HZ_DIRECTX12
 
@@ -93,10 +95,10 @@ namespace Hazel {
 	void ImGuiLayer::Begin()
 	{
 
-#ifdef HZ_DIRECTX12
-		ImGui_ImplDX12_NewFrame();
+#ifdef HZ_DIRECTX11
+		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
-#endif // HZ_DIRECTX12
+#endif // HZ_DIRECTX11
 
 #ifdef HZ_OPENGL
 		ImGui_ImplOpenGL3_NewFrame();
@@ -113,9 +115,9 @@ namespace Hazel {
 
 		// Rendering
 		ImGui::Render();
-#ifdef HZ_DIRECTX12
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData());
-#endif // HZ_DIRECTX12
+#ifdef HZ_DIRECTX11
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif // HZ_DIRECTX11
 #ifdef HZ_OPENGL
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif // HZ_OPENGL

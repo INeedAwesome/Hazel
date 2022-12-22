@@ -144,6 +144,7 @@ ExampleLayer::ExampleLayer()
 void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 {
 	HZ_TRACE("Delta Time: {0}s,	({1}ms),	fps:{2}", ts.GetSeconds(), ts.GetMilliseconds(), ts.GetMilliseconds()*5000);
+
 	/*
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
 		m_CameraPosition.x -= m_CameraSpeed * ts;
@@ -161,7 +162,6 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 		m_CameraRotation -= m_CameraRotationSpeed * ts;
 
 	*/
-
 
 	Hazel::RenderCommand::SetClearColor({ m_BGColor[0], m_BGColor[1], m_BGColor[2], m_BGColor[3] });
 	Hazel::RenderCommand::Clear();

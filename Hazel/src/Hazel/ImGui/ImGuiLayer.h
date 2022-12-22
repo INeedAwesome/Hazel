@@ -6,6 +6,11 @@
 #include "Hazel/Events/MouseEvent.h"
 #include "Hazel/Events/ApplicationEvent.h"
 
+#ifdef HZ_DIRECTX11
+	#include "Platform/DirectX11/DirectX11HeaderInstance.h"
+#endif // HZ_DIRECTX11
+
+
 namespace Hazel {
 
 	class ImGuiLayer : public Hazel::Layer
@@ -23,6 +28,10 @@ namespace Hazel {
 
 	private:
 		float m_Time = 0.0f;
+#ifdef HZ_DIRECTX11
+		DirectX11HeaderInstance* m_D3DInstance = &DirectX11HeaderInstance::GetInstance();
+#endif // HZ_DIRECTX11
+
 	};
 }
 

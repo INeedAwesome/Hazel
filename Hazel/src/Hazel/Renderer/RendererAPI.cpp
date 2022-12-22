@@ -3,8 +3,8 @@
 
 namespace Hazel {
 	
-#ifdef HZ_DIRECTX12
-	RendererAPI::API RendererAPI::s_API = RendererAPI::API::DirectX12;
+#ifdef HZ_DIRECTX11
+	RendererAPI::API RendererAPI::s_API = RendererAPI::API::DirectX11;
 #endif // HZ_DIRECTX12
 #ifdef HZ_OPENGL
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;

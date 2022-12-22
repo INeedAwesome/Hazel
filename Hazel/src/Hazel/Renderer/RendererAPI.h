@@ -11,7 +11,7 @@ namespace Hazel {
 	public:
 		enum class API
 		{
-			None = 0, OpenGL = 1, DirectX12 = 2
+			None = 0, OpenGL = 1, DirectX11 = 2
 		};
 
 		virtual void SetClearColor(const glm::vec4& color) = 0;
@@ -25,7 +25,7 @@ namespace Hazel {
 		{ 
 			if (s_API == API::None) { return "None"; }
 			else if (s_API == API::OpenGL) { return "OpenGL";}
-			else if (s_API == API::DirectX12) { return "DirectX12";}
+			else if (s_API == API::DirectX11) { return "DirectX 11";}
 		}
 	private:
 		static API s_API;

@@ -2,11 +2,18 @@
 
 #include "Hazel/Renderer/RendererAPI.h"
 
-#include "Platform/DirectX12/DirectX12Context.h"
+#include "Platform/DirectX11/DirectX11Context.h"
+
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+
+#include <d3d11_1.h>
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
 
 namespace Hazel {
 
-	class DirectX12RendererAPI : public RendererAPI
+	class DirectX11RendererAPI : public RendererAPI
 	{
 	public:
 		virtual void SetClearColor(const glm::vec4& color) override;
@@ -16,6 +23,7 @@ namespace Hazel {
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) override;
 
 	private:
+		DirectX11HeaderInstance* m_D3DInstance = &DirectX11HeaderInstance::GetInstance();
 	};
 
 }

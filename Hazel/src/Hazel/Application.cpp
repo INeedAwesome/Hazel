@@ -40,6 +40,11 @@ namespace Hazel {
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
+			if (time - m_LastFrameTime >= 1.0f)
+			{
+				HZ_TRACE("FPS: {0}", timestep.GetMilliseconds() * 5000);
+			}
+
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(timestep);
 
