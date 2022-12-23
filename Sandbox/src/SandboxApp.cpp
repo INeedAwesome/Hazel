@@ -18,7 +18,9 @@ Sandbox::~Sandbox()
 }
 
 ExampleLayer::ExampleLayer()
-	: Layer("SandboxApp"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0, 0, 0), m_SquarePosition(0, 0, 0)
+	: Layer("SandboxApp"), m_OrthoCamera(-1.6f, 1.6f, -0.9f, 0.9f), m_PerspectiveCamera(70.0f, 1.777777f, 0.01f, 100.0f),
+	m_CameraPositionOrtho(0, 0, 0), m_CameraPositionPerspective(0, 0, 1), 
+	m_SquarePosition(0, 0, 0)
 {
 	
 #pragma region triangle
@@ -149,14 +151,30 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 
 
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
-		m_CameraPosition.x -= m_CameraSpeed * ts;
+		m_CameraPositionOrtho.x -= m_CameraSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
-		m_CameraPosition.x += m_CameraSpeed * ts;
+		m_CameraPositionOrtho.x += m_CameraSpeed * ts;
 
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_DOWN))
-		m_CameraPosition.y -= m_CameraSpeed * ts;
+		m_CameraPositionOrtho.y -= m_CameraSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
-		m_CameraPosition.y += m_CameraSpeed * ts;
+		m_CameraPositionOrtho.y += m_CameraSpeed * ts;
+
+	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
+		m_CameraPositionPerspective.x -= m_CameraSpeed * ts;
+	else if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
+		m_CameraPositionPerspective.x += m_CameraSpeed * ts;
+
+	if (Hazel::Input::IsKeyPressed(HZ_KEY_S))
+		m_CameraPositionPerspective.y -= m_CameraSpeed * ts;
+	else if (Hazel::Input::IsKeyPressed(HZ_KEY_W))
+		m_CameraPositionPerspective.y += m_CameraSpeed * ts;
+
+
+	if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT))
+		m_CameraPositionPerspective.z += m_CameraSpeed * ts;
+	if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_RIGHT))
+		m_CameraPositionPerspective.z -= m_CameraSpeed * ts;
 
 	/*	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
 			m_CameraRotation += m_CameraRotationSpeed * ts;
@@ -167,10 +185,10 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 	Hazel::RenderCommand::SetClearColor({ m_BGColor[0], m_BGColor[1], m_BGColor[2], m_BGColor[3] });
 	Hazel::RenderCommand::Clear();
 
-	m_Camera.SetPosition(m_CameraPosition);
-	m_Camera.SetRotation(m_CameraRotation);
+	m_PerspectiveCamera.SetPosition(m_CameraPositionPerspective);
+	m_PerspectiveCamera.SetRotation(m_CameraRotation);
 
-	Hazel::Renderer::BeginScene(m_Camera);
+	Hazel::Renderer::BeginScene(m_PerspectiveCamera);
 
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -211,5 +229,5 @@ bool ExampleLayer::OnKeyPressedEvent(Hazel::KeyPressedEvent& event)
 		app.StopRunning(); // stop app
 	}
 
-	return false;
+	return true; // we handled it
 }

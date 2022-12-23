@@ -3,6 +3,7 @@
 #include "RenderCommand.h"
 
 #include "OrthographicCamera.h"
+#include "PerspectiveCamera.h"
 #include "Shader.h"
 
 namespace Hazel {
@@ -12,6 +13,7 @@ namespace Hazel {
 	public:
 		
 		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene(PerspectiveCamera& camera);
 		static void EndScene();
 
 		static void Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));

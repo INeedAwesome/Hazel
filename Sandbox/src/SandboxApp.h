@@ -35,11 +35,14 @@ private:
 	std::shared_ptr<Hazel::Shader> m_SquareShader;
 	std::shared_ptr<Hazel::VertexArray> m_SquareVertexArray;
 	
-	Hazel::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition;
+	Hazel::OrthographicCamera m_OrthoCamera;
+	Hazel::PerspectiveCamera m_PerspectiveCamera;
+	glm::vec3 m_CameraPositionOrtho;
+	glm::vec3 m_CameraPositionPerspective;
 	float m_CameraSpeed = 5.0f;
 	float m_CameraRotation = 0.0f;
 	float m_CameraRotationSpeed = 45.0f;
+
 
 	float m_SquareSpeed = 1.0f;
 	glm::vec3 m_SquarePosition;
