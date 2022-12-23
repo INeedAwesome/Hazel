@@ -2,6 +2,8 @@
 
 #include <Hazel.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 class Sandbox : public Hazel::Application
 {
 public:
@@ -36,8 +38,10 @@ private:
 	Hazel::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
 	float m_CameraSpeed = 5.0f;
-
 	float m_CameraRotation = 0.0f;
 	float m_CameraRotationSpeed = 45.0f;
+
+	float m_SquareSpeed = 1.0f;
+	glm::vec3 m_SquarePosition;
 
 };

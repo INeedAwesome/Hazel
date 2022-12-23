@@ -18,15 +18,15 @@ Sandbox::~Sandbox()
 }
 
 ExampleLayer::ExampleLayer()
-	: Layer("SandboxApp"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0, 0, 0)
+	: Layer("SandboxApp"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0, 0, 0), m_SquarePosition(0, 0, 0)
 {
 	
 #pragma region triangle
 
 	float vertices[3 * 7] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-		 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
+		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f, 0.0f,		1.0f, 0.0f, 0.0f, 1.0f,
+		 0.0f,  0.5f, 0.0f,		0.0f, 1.0f, 0.0f, 1.0f
 	};
 
 	m_VertexArray.reset(Hazel::VertexArray::Create());
@@ -50,10 +50,10 @@ ExampleLayer::ExampleLayer()
 
 	m_SquareVertexArray.reset(Hazel::VertexArray::Create());
 	float sqaureVertices[3 * 4] = {
-		 -0.75f, -0.75f, 0.0f,
-		  0.75f, -0.75f, 0.0f,
-		  0.75f,  0.75f, 0.0f,
-		 -0.75f,  0.75f, 0.0f
+		 -0.5f, -0.5f, 0.0f,
+		  0.5f, -0.5f, 0.0f,
+		  0.5f,  0.5f, 0.0f,
+		 -0.5f,  0.5f, 0.0f
 	};
 	std::shared_ptr<Hazel::VertexBuffer> squareVertexBuffer;
 	squareVertexBuffer.reset(Hazel::VertexBuffer::Create(sqaureVertices, sizeof(sqaureVertices)));
@@ -81,11 +81,12 @@ ExampleLayer::ExampleLayer()
 			out vec4 v_Color;
 			
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
 
 			void main() {
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1);
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1);
 			}
 		)";
 	std::string fragmentSource = R"(
@@ -116,10 +117,11 @@ ExampleLayer::ExampleLayer()
 			out vec3 v_Position;
 
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
 
 			void main() {
 				v_Position = a_Position;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1);
+				gl_Position = u_ViewProjection * u_Transform* vec4(a_Position, 1);
 			}
 		)";
 	std::string sqaureFragmentSource = R"(
@@ -145,7 +147,7 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 {
 	//HZ_TRACE("Delta Time: {0}s,	({1}ms),	fps:{2}", ts.GetSeconds(), ts.GetMilliseconds(), ts.GetMilliseconds()*5000);
 
-	
+
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
 		m_CameraPosition.x -= m_CameraSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
@@ -156,22 +158,33 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
 		m_CameraPosition.y += m_CameraSpeed * ts;
 
-/*	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
-		m_CameraRotation += m_CameraRotationSpeed * ts;
-	else if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
-		m_CameraRotation -= m_CameraRotationSpeed * ts;			*/
+	/*	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
+			m_CameraRotation += m_CameraRotationSpeed * ts;
+		else if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
+			m_CameraRotation -= m_CameraRotationSpeed * ts;			*/
 
-	
 
 	Hazel::RenderCommand::SetClearColor({ m_BGColor[0], m_BGColor[1], m_BGColor[2], m_BGColor[3] });
 	Hazel::RenderCommand::Clear();
-	
+
 	m_Camera.SetPosition(m_CameraPosition);
 	m_Camera.SetRotation(m_CameraRotation);
 
 	Hazel::Renderer::BeginScene(m_Camera);
 
-	Hazel::Renderer::Submit(m_SquareShader, m_SquareVertexArray);
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+	for (int y = 0; y < 20; y++)
+	{
+		for (int x = 0; x < 20; x++)
+		{
+			glm::vec3 position(x * 0.11f, y * 0.11f, 0);
+
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
+
+			Hazel::Renderer::Submit(m_SquareShader, m_SquareVertexArray, transform);
+		}
+	}
 	Hazel::Renderer::Submit(m_Shader, m_VertexArray);
 	
 	Hazel::Renderer::EndScene();
