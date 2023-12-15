@@ -6,6 +6,7 @@
 #include "Hazel/Log.h"
 
 #include "Hazel/Core/Timestep.h"
+#include "Hazel/Core/Timer.h"
 
 #include "Hazel/Events/Event.h"
 #include "Hazel/Events/ApplicationEvent.h"

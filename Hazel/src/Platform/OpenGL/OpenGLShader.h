@@ -25,7 +25,11 @@ namespace Hazel {
 		void UploadUniform(const std::string& name, const glm::mat4& matrix);
 
 	private:
+		int32_t GetUniformLocation(const std::string& name) const;
+
+	private:
 		unsigned int m_RendererID;
+		mutable std::unordered_map<std::string, int32_t> m_UniformLocationCache; // Mark it as mutable so that GetUniformLocation() can change this
 
 	};
 }

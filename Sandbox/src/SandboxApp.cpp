@@ -204,6 +204,7 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_SquareShader)->Bind();
 	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_SquareShader)->UploadUniform("u_Color", m_SquareColor);
 
+	Hazel::Timer timer("Render 400 squares");
 	for (int y = 0; y < 20; y++)
 	{
 		for (int x = 0; x < 20; x++)
@@ -213,6 +214,7 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 			Hazel::Renderer::Submit(m_SquareShader, m_SquareVertexArray, transform);
 		}
 	}
+	timer.StopAndPrintTime();
 	
 	Hazel::Renderer::Submit(m_Shader, m_VertexArray); // triangle 
 	

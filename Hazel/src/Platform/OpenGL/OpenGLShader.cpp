@@ -127,51 +127,63 @@ namespace Hazel {
 
 	void OpenGLShader::UploadUniform(const std::string& name, int32_t value)
 	{
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		int location = GetUniformLocation(name.c_str());
 		HZ_CORE_ASSERT(location != -1, "Uniform location doesn't exist!");
 		glUniform1i(location, value);
 	}
 
 	void OpenGLShader::UploadUniform(const std::string& name, float value)
 	{
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		int location = GetUniformLocation(name.c_str());
 		HZ_CORE_ASSERT(location != -1, "Uniform location doesn't exist!");
 		glUniform1f(location, value);
 	}
 
 	void OpenGLShader::UploadUniform(const std::string& name, const glm::vec2& values)
 	{
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		int location = GetUniformLocation(name.c_str());
 		HZ_CORE_ASSERT(location != -1, "Uniform location doesn't exist!");
 		glUniform2f(location, values.x, values.y);
 	}
 
 	void OpenGLShader::UploadUniform(const std::string& name, const glm::vec3& values)
 	{
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		int location = GetUniformLocation(name.c_str());
 		HZ_CORE_ASSERT(location != -1, "Uniform location doesn't exist!");
 		glUniform3f(location, values.x, values.y, values.z );
 	}
 
 	void OpenGLShader::UploadUniform(const std::string& name, const glm::vec4& values)
 	{
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		int location = GetUniformLocation(name.c_str());
 		HZ_CORE_ASSERT(location != -1, "Uniform location doesn't exist!");
 		glUniform4f(location, values.x, values.y, values.z, values.w);
 	}
 
 	void OpenGLShader::UploadUniform(const std::string& name, const glm::mat4& matrix)
 	{
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		int location = GetUniformLocation(name.c_str());
 		HZ_CORE_ASSERT(location != -1, "Uniform location doesn't exist!");
 		glUniformMatrix4fv(location, 1, false, glm::value_ptr(matrix));
 	}
 
 	void OpenGLShader::UploadUniform(const std::string& name, const glm::mat3& matrix)
 	{
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		int location = GetUniformLocation(name.c_str());
 		HZ_CORE_ASSERT(location != -1, "Uniform location doesn't exist!");
 		glUniformMatrix3fv(location, 1, false, glm::value_ptr(matrix));
+	}
+
+	int32_t OpenGLShader::GetUniformLocation(const std::string& name) const
+	{
+		auto res = m_UniformLocationCache.find(name);
+		if (res != m_UniformLocationCache.end())
+			return res->second;
+		
+		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		m_UniformLocationCache[name] = location;
+
+		return location;
 	}
 
 }

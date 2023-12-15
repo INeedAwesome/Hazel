@@ -1406,6 +1406,7 @@
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\PerspectiveCamera.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="src\Hazel\Core\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Application.cpp">
