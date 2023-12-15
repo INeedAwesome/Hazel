@@ -1,8 +1,12 @@
 #include "SandboxApp.h"
 
+#include "Platform/OpenGL/OpenGLShader.h"
+
 #include "imgui/imgui.h"
 
 #include "GLFW/include/GLFW/glfw3.h"
+
+#include <glm/gtc/type_ptr.hpp>
 
 Hazel::Application* Hazel::CreateApplication()
 { 
@@ -18,7 +22,7 @@ Sandbox::~Sandbox()
 }
 
 ExampleLayer::ExampleLayer()
-	: Layer("SandboxApp"), m_OrthoCamera(-1.6f, 1.6f, -0.9f, 0.9f), m_PerspectiveCamera(70.0f, 1.777777f, 0.01f, 100.0f),
+	: Layer("SandboxApp"), m_OrthoCamera(-1.6f, 1.6f, -0.9f, 0.9f), m_PerspectiveCamera(70.0f, 1.0f, 0.01f, 100.0f),
 	m_CameraPositionOrtho(0, 0, 0), m_CameraPositionPerspective(0, 0, 1), 
 	m_SquarePosition(0, 0, 0)
 {
@@ -105,7 +109,7 @@ ExampleLayer::ExampleLayer()
 			}
 		)";
 
-	m_Shader.reset(new Hazel::Shader(vertexSource, fragmentSource));
+	m_Shader.reset(Hazel::Shader::Create(vertexSource, fragmentSource));
 
 #pragma endregion
 
@@ -132,14 +136,16 @@ ExampleLayer::ExampleLayer()
 			layout (location = 0) out vec4 o_Color;
 
 			in vec3 v_Position;
+
+			uniform vec3 u_Color;
 			
 			void main() {
-				o_Color = vec4(0.2, 0.3, 1.0, 1.0); 
+				o_Color = vec4(u_Color, 1); 
 			}
 
 		)";
 
-	m_SquareShader.reset(new Hazel::Shader(sqaureVertexSource, sqaureFragmentSource));
+	m_SquareShader.reset(Hazel::Shader::Create(sqaureVertexSource, sqaureFragmentSource));
 
 #pragma endregion
 
@@ -147,7 +153,7 @@ ExampleLayer::ExampleLayer()
 
 void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 {
-	//HZ_TRACE("Delta Time: {0}s,	({1}ms),	fps:{2}", ts.GetSeconds(), ts.GetMilliseconds(), ts.GetMilliseconds()*5000);
+	// HZ_TRACE("Delta Time: {0}s,	({1}ms),	fps:{2}", ts.GetSeconds(), ts.GetMilliseconds(), ts.GetMilliseconds()*5000);
 
 
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
@@ -161,58 +167,67 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 		m_CameraPositionOrtho.y += m_CameraSpeed * ts;
 
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
-		m_CameraPositionPerspective.x -= m_CameraSpeed * ts;
-	else if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
-		m_CameraPositionPerspective.x += m_CameraSpeed * ts;
+		m_CameraPositionOrtho.x -= m_CameraSpeed * ts;
+	if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
+		m_CameraPositionOrtho.x += m_CameraSpeed * ts;
 
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_S))
-		m_CameraPositionPerspective.y -= m_CameraSpeed * ts;
+		m_CameraPositionOrtho.y -= m_CameraSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_W))
-		m_CameraPositionPerspective.y += m_CameraSpeed * ts;
+		m_CameraPositionOrtho.y += m_CameraSpeed * ts;
 
-
-	if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT))
-		m_CameraPositionPerspective.z += m_CameraSpeed * ts;
+/*	if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT))
+		m_CameraPositionOrtho.z += m_CameraSpeed * ts;
 	if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_RIGHT))
-		m_CameraPositionPerspective.z -= m_CameraSpeed * ts;
+		m_CameraPositionOrtho.z -= m_CameraSpeed * ts;					*/
 
-	/*	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
-			m_CameraRotation += m_CameraRotationSpeed * ts;
-		else if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
-			m_CameraRotation -= m_CameraRotationSpeed * ts;			*/
+	if (Hazel::Input::IsKeyPressed(HZ_KEY_Q))
+		m_CameraRotation += m_CameraRotationSpeed * ts;
+	else if (Hazel::Input::IsKeyPressed(HZ_KEY_E))
+		m_CameraRotation -= m_CameraRotationSpeed * ts;
 
 
 	Hazel::RenderCommand::SetClearColor({ m_BGColor[0], m_BGColor[1], m_BGColor[2], m_BGColor[3] });
 	Hazel::RenderCommand::Clear();
 
-	m_PerspectiveCamera.SetPosition(m_CameraPositionPerspective);
-	m_PerspectiveCamera.SetRotation(m_CameraRotation);
+	m_OrthoCamera.SetPosition(m_CameraPositionOrtho);
+	m_OrthoCamera.SetRotation(m_CameraRotation);
 
-	Hazel::Renderer::BeginScene(m_PerspectiveCamera);
+	Hazel::Renderer::BeginScene(m_OrthoCamera);
 
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+
+	glm::vec4 redColor(1.0f, 0.3f, 0.2f, 1.0f);
+	glm::vec4 blueColor(0.2f, 0.3f, 1.0f, 1.0f);
+
+	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_SquareShader)->Bind();
+	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_SquareShader)->UploadUniform("u_Color", m_SquareColor);
 
 	for (int y = 0; y < 20; y++)
 	{
 		for (int x = 0; x < 20; x++)
 		{
 			glm::vec3 position(x * 0.11f, y * 0.11f, 0);
-
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
-
 			Hazel::Renderer::Submit(m_SquareShader, m_SquareVertexArray, transform);
 		}
 	}
-	Hazel::Renderer::Submit(m_Shader, m_VertexArray);
+	
+	Hazel::Renderer::Submit(m_Shader, m_VertexArray); // triangle 
 	
 	Hazel::Renderer::EndScene();
 }
 
 void ExampleLayer::OnImGuiRender()
 {
+	
 	ImGui::Begin("Sandbox app");
 	ImGui::ColorEdit4("color", m_BGColor);
+	ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
 	ImGui::End();
+	
+	
 }
 
 void ExampleLayer::OnEvent(Hazel::Event& e)

@@ -2,23 +2,16 @@
 
 #include <string>
 
-#include <glm/glm.hpp>
-
 namespace Hazel {
+
 	class Shader 
 	{
 	public:
-		Shader(const std::string& vertexSource, const std::string& fragmentSource);
-		~Shader();
+		virtual ~Shader() = default;
 
-		void Bind();
-		void Unbind();
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 
-		void UploadUniform(const std::string& name, const glm::mat4& matrix);
-		void UploadUniform(const std::string& name, const glm::mat3& matrix);
-
-	private:
-		unsigned int m_RendererID;
-
+		static Shader* Create(const std::string& vertexSource, const std::string& fragmentSource);
 	};
 }

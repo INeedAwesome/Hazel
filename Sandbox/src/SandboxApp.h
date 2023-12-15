@@ -9,9 +9,7 @@ class Sandbox : public Hazel::Application
 public:
 	Sandbox();
 	~Sandbox();
-
 private:
-
 };
 
 class ExampleLayer : public Hazel::Layer 
@@ -43,8 +41,9 @@ private:
 	float m_CameraRotation = 0.0f;
 	float m_CameraRotationSpeed = 45.0f;
 
-
 	float m_SquareSpeed = 1.0f;
 	glm::vec3 m_SquarePosition;
+
+	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 1.0f };
 
 };
