@@ -75,7 +75,8 @@ project "Hazel"
 		{
 			"HZ_PLATFORM_WINDOWS",
 			"HZ_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
+			"GLFW_INCLUDE_NONE",
+			"HZ_OPENGL"
 		}
 
 	filter "configurations:Debug"
@@ -132,16 +133,19 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
+		staticruntime "on"
 		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
 		defines "HZ_RELEASE"
+		staticruntime "on"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
 		defines "HZ_DIST"
+		staticruntime "on"
 		runtime "Release"
 		optimize "on"
 		kind "WindowedApp"
