@@ -26,12 +26,13 @@ namespace Hazel {
 		{ 
 			switch (RendererAPI::GetAPI())
 			{
-			case RendererAPI::API::None: return nullptr; break;
-			case RendererAPI::API::OpenGL: return m_Window; break;
-			case RendererAPI::API::DirectX11: return m_Window; break;
-			default:
-				break;
+				case RendererAPI::API::None: return nullptr; break;
+				case RendererAPI::API::OpenGL: return m_Window; break;
+				case RendererAPI::API::DirectX11: return m_Window; break;
+				default:
+					break;
 			}
+			return nullptr;
 		}
 
 	private:

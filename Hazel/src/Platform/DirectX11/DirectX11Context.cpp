@@ -94,11 +94,12 @@ namespace Hazel {
 		//  if D3D11CreateDeviceAndSwapChain failed HZ_CORE_ASSERT is triggerd. 
 
 		//Create our BackBuffer
-		ID3D11Texture2D* backBuffer;
+		ID3D11Texture2D* backBuffer = nullptr;
 		HZ_CORE_ASSERT(SUCCEEDED(swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer))), "Failed to create back buffer!");
 
 		//Create our Render Target
 		HZ_CORE_ASSERT(SUCCEEDED(d3d11Device->CreateRenderTargetView(backBuffer, NULL, &renderTargetView)), "Failed to create render target view of the back buffer");
+#pragma warning( disable : 4700) // complains that backBuffer is uninitialized
 		backBuffer->Release();
 		
 		// create a depth stencil view

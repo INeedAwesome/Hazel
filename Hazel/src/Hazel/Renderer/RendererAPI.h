@@ -24,8 +24,9 @@ namespace Hazel {
 		inline static std::string GetAPIName() 
 		{ 
 			if (s_API == API::None) { return "None"; }
-			else if (s_API == API::OpenGL) { return "OpenGL";}
-			else if (s_API == API::DirectX11) { return "DirectX 11";}
+			else if (s_API == API::OpenGL) { return "OpenGL"; }
+			else if (s_API == API::DirectX11) { return "DirectX 11"; }
+			return nullptr;
 		}
 	private:
 		static API s_API;

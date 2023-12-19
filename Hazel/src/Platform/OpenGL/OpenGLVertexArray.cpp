@@ -57,6 +57,7 @@ namespace Hazel{
 		for (const auto& element : layout)
 		{
 			glEnableVertexAttribArray(index);
+#pragma warning( disable : 4312) // complains that element.Offset is being casted to void*
 			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.Offset);
 			index++;
