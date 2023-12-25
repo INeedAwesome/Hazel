@@ -27,11 +27,11 @@ private:
 
 	float m_BGColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f }; // { 0.1f, 0.1f, 0.1f, 0.1f }
 	
-	std::shared_ptr<Hazel::Shader> m_Shader;
-	std::shared_ptr<Hazel::VertexArray> m_VertexArray;
+	Hazel::Ref<Hazel::Shader> m_Shader;
+	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
 
-	std::shared_ptr<Hazel::Shader> m_SquareShader;
-	std::shared_ptr<Hazel::VertexArray> m_SquareVertexArray;
+	Hazel::Ref<Hazel::Shader> m_SquareShader;
+	Hazel::Ref<Hazel::VertexArray> m_SquareVertexArray;
 	
 	Hazel::OrthographicCamera m_OrthoCamera;
 	Hazel::PerspectiveCamera m_PerspectiveCamera;

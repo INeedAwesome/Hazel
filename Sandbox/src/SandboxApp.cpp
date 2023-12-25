@@ -36,7 +36,7 @@ ExampleLayer::ExampleLayer()
 	};
 
 	m_VertexArray.reset(Hazel::VertexArray::Create());
-	std::shared_ptr<Hazel::VertexBuffer> vertexBuffer;
+	Hazel::Ref<Hazel::VertexBuffer> vertexBuffer;
 	vertexBuffer.reset(Hazel::VertexBuffer::Create(vertices, sizeof(vertices)));
 	Hazel::BufferLayout layout = {
 		{ Hazel::ShaderDataType::Float3, "a_Position" },
@@ -46,7 +46,7 @@ ExampleLayer::ExampleLayer()
 	m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 	unsigned int indices[3] = { 0, 1, 2 };
-	std::shared_ptr<Hazel::IndexBuffer> indexBuffer;
+	Hazel::Ref<Hazel::IndexBuffer> indexBuffer;
 	indexBuffer.reset(Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int)));
 	m_VertexArray->SetIndexBuffer(indexBuffer);
 
@@ -61,7 +61,7 @@ ExampleLayer::ExampleLayer()
 		  0.5f,  0.5f, 0.0f,
 		 -0.5f,  0.5f, 0.0f
 	};
-	std::shared_ptr<Hazel::VertexBuffer> squareVertexBuffer;
+	Hazel::Ref<Hazel::VertexBuffer> squareVertexBuffer;
 	squareVertexBuffer.reset(Hazel::VertexBuffer::Create(sqaureVertices, sizeof(sqaureVertices)));
 	squareVertexBuffer->SetLayout({
 		{ Hazel::ShaderDataType::Float3, "a_Position" }
@@ -69,7 +69,7 @@ ExampleLayer::ExampleLayer()
 	m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
 
 	unsigned int sqaureIndices[6] = { 0, 1, 2, 2, 3, 0 };
-	std::shared_ptr<Hazel::IndexBuffer> squareIndexBuffer;
+	Hazel::Ref<Hazel::IndexBuffer> squareIndexBuffer;
 	squareIndexBuffer.reset(Hazel::IndexBuffer::Create(sqaureIndices, sizeof(sqaureIndices) / sizeof(unsigned int)));
 	m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
 

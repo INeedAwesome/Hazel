@@ -19,7 +19,7 @@ namespace Hazel {
 	{
 	}
 
-	void DirectX11RendererAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
+	void DirectX11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
 	{
 	}
 }
