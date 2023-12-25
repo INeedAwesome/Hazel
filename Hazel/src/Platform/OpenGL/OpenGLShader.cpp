@@ -176,7 +176,7 @@ namespace Hazel {
 
 	int32_t OpenGLShader::GetUniformLocation(const std::string& name) const
 	{
-		auto res = m_UniformLocationCache.find(name);
+		auto res = m_UniformLocationCache.find(name.c_str());
 		if (res != m_UniformLocationCache.end())
 			return res->second;
 		

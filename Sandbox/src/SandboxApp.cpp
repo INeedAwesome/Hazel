@@ -55,16 +55,17 @@ ExampleLayer::ExampleLayer()
 #pragma region square
 
 	m_SquareVertexArray.reset(Hazel::VertexArray::Create());
-	float sqaureVertices[3 * 4] = {
-		 -0.5f, -0.5f, 0.0f,
-		  0.5f, -0.5f, 0.0f,
-		  0.5f,  0.5f, 0.0f,
-		 -0.5f,  0.5f, 0.0f
+	float sqaureVertices[5 * 4] = {
+		 -0.5f, -0.5f, 0.0f,	0.0f, 0.0f,
+		  0.5f, -0.5f, 0.0f,	1.0f, 0.0f,
+		  0.5f,  0.5f, 0.0f,	1.0f, 1.0f,
+		 -0.5f,  0.5f, 0.0f,	0.0f, 1.0f
 	};
 	Hazel::Ref<Hazel::VertexBuffer> squareVertexBuffer;
 	squareVertexBuffer.reset(Hazel::VertexBuffer::Create(sqaureVertices, sizeof(sqaureVertices)));
 	squareVertexBuffer->SetLayout({
-		{ Hazel::ShaderDataType::Float3, "a_Position" }
+		{ Hazel::ShaderDataType::Float3, "a_Position" },
+		{ Hazel::ShaderDataType::Float2, "a_TexCoord" }
 		});
 	m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
 
@@ -75,7 +76,7 @@ ExampleLayer::ExampleLayer()
 
 #pragma endregion
 
-#pragma region triangle Source
+#pragma region Triangle Shader Source
 
 	std::string vertexSource = R"(
 			#version 330 core
@@ -113,7 +114,7 @@ ExampleLayer::ExampleLayer()
 
 #pragma endregion
 
-#pragma region square Source
+#pragma region Square Source
 
 	std::string sqaureVertexSource = R"(
 			#version 330 core
@@ -148,6 +149,47 @@ ExampleLayer::ExampleLayer()
 	m_SquareShader.reset(Hazel::Shader::Create(sqaureVertexSource, sqaureFragmentSource));
 
 #pragma endregion
+
+#pragma region Texture Shader Source
+
+	std::string textureShaderVertexSource = R"(
+			#version 330 core
+			
+			layout (location = 0) in vec3 a_Position;
+			layout (location = 1) in vec2 a_TexCoord;
+
+			out vec2 v_TexCoord;
+			
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			void main() {
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1);
+			}
+		)";
+	std::string textureShaderFragmentSource = R"(
+			#version 330 core
+			
+			layout (location = 0) out vec4 o_Color;
+
+			in vec2 v_TexCoord;
+
+			uniform sampler2D u_Texture;
+			
+			void main() {
+				o_Color = texture(u_Texture, v_TexCoord);
+			}
+		)";
+
+	m_TextureShader.reset(Hazel::Shader::Create(textureShaderVertexSource, textureShaderFragmentSource));
+
+#pragma endregion
+
+	m_Texture = Hazel::Texture2D::Create("assets/textures/checkerboard-pattern.jpg");
+
+	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->Bind();
+	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->UploadUniform("u_Texture", 0);
 
 }
 
@@ -216,7 +258,10 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 	}
 	timer.StopAndPrintTime();
 	
-	Hazel::Renderer::Submit(m_Shader, m_VertexArray); // triangle 
+	m_Texture->Bind();
+	Hazel::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+	// Triangle rendering
+	// Hazel::Renderer::Submit(m_Shader, m_VertexArray); // triangle 
 	
 	Hazel::Renderer::EndScene();
 }
