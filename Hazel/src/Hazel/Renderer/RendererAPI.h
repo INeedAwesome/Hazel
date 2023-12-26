@@ -14,6 +14,7 @@ namespace Hazel {
 			None = 0, OpenGL = 1, DirectX11 = 2
 		};
 
+		virtual void Init() = 0;
 		virtual void SetClearColor(const glm::vec4& color) = 0;
 		virtual void Clear() = 0;
 		virtual void Resize(int width, int height) = 0;

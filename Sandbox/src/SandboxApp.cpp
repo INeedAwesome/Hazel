@@ -186,7 +186,8 @@ ExampleLayer::ExampleLayer()
 
 #pragma endregion
 
-	m_Texture = Hazel::Texture2D::Create("assets/textures/checkerboard-pattern.jpg");
+	m_Texture = Hazel::Texture2D::Create("assets/textures/checkerboard-pattern615x615.jpg");
+	m_HLogoTexture = Hazel::Texture2D::Create("assets/textures/H_circle.png");
 
 	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->Bind();
 	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->UploadUniform("u_Texture", 0);
@@ -195,9 +196,6 @@ ExampleLayer::ExampleLayer()
 
 void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 {
-	// HZ_TRACE("Delta Time: {0}s,	({1}ms),	fps:{2}", ts.GetSeconds(), ts.GetMilliseconds(), ts.GetMilliseconds()*5000);
-
-
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
 		m_CameraPositionOrtho.x -= m_CameraSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
@@ -217,11 +215,6 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 		m_CameraPositionOrtho.y -= m_CameraSpeed * ts;
 	else if (Hazel::Input::IsKeyPressed(HZ_KEY_W))
 		m_CameraPositionOrtho.y += m_CameraSpeed * ts;
-
-/*	if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT))
-		m_CameraPositionOrtho.z += m_CameraSpeed * ts;
-	if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_RIGHT))
-		m_CameraPositionOrtho.z -= m_CameraSpeed * ts;					*/
 
 	if (Hazel::Input::IsKeyPressed(HZ_KEY_Q))
 		m_CameraRotation += m_CameraRotationSpeed * ts;
@@ -260,6 +253,11 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 	
 	m_Texture->Bind();
 	Hazel::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+	m_HLogoTexture->Bind();
+	Hazel::Renderer::Submit(m_TextureShader, m_SquareVertexArray, 
+		glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
 	// Triangle rendering
 	// Hazel::Renderer::Submit(m_Shader, m_VertexArray); // triangle 
 	

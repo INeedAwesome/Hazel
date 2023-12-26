@@ -25,7 +25,9 @@ namespace Hazel {
 		WindowProps props("Hazel Engine", 1920, 1080);
 		m_Window = std::unique_ptr<Window>(Window::Create(propsDefault));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-		m_Window->SetVSync(true);
+		m_Window->SetVSync(false);
+
+		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
@@ -33,17 +35,13 @@ namespace Hazel {
 	}
 
 	void Application::Run()
-	{ 
+	{
+		float lastFrameTime = 0.0f;
 		while (m_Running)
 		{
 			float time = (float)glfwGetTime(); // platform::GetTime
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;
-
-			if (time - m_LastFrameTime >= 1.0f)
-			{
-				HZ_TRACE("FPS: {0}", timestep.GetMilliseconds() * 5000);
-			}
+			Timestep timestep = time - lastFrameTime;
+			lastFrameTime = time;
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(timestep);

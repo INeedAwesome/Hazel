@@ -16,23 +16,31 @@ namespace Hazel {
 
 		m_Width = width;
 		m_Height = height;
+		
+		GLenum internalFormat = GL_RGB8;
+		GLenum dataFormat = GL_RGB;
 
+		if (channels == 4) 
+		{
+			internalFormat = GL_RGBA8;  
+			dataFormat = GL_RGBA;
+		}
+		
 		glGenTextures(1, &m_RendererID);
 		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
 		// because we use GL_RGB8 we need to use 1 byte alignment 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		glTextureStorage2D(m_RendererID, 1, GL_RGB8, m_Width, m_Height);
+		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 		
-		int format = GL_RGB;
-		if (channels == 4)
-			format = GL_RGBA;
-		
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, format, GL_UNSIGNED_BYTE, data);
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+
+		Unbind();
 
 		stbi_image_free(data);
 	}
@@ -44,7 +52,12 @@ namespace Hazel {
 	
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		glBindTexture(0, m_RendererID);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+	}
+
+	void OpenGLTexture2D::Unbind(uint32_t slot) const 
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 }

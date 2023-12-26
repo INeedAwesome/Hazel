@@ -14,6 +14,7 @@ namespace Hazel {
 		virtual uint32_t GetHeight() const override { return m_Height; };
 
 		virtual void Bind(uint32_t slot = 0) const override;
+		virtual void Unbind(uint32_t slot = 0) const override;
 
 	private:
 		std::string m_Path = "";

@@ -8,6 +8,11 @@ namespace Hazel {
 	{
 	public:
 
+		inline static void Init()
+		{
+			s_RendererAPI->Init();
+		}
+
 #pragma region clear
 
 		inline static void SetClearColor(const glm::vec4& color)
