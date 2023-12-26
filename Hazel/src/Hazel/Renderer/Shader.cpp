@@ -6,13 +6,24 @@
 
 namespace Hazel {
 
-
-	Shader* Shader::Create(const std::string& vertexSource, const std::string& fragmentSource)
+	Ref<Shader> Shader::Create(const std::string& filepath)
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None: HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-		case RendererAPI::API::OpenGL: return new OpenGLShader(vertexSource, fragmentSource);
+			case RendererAPI::API::None: HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLShader>(filepath);
+		}
+
+		HZ_CORE_ASSERT(false, "Unknown Renderer api!");
+		return nullptr;
+	}
+
+	Ref<Shader> Shader::Create(const std::string& vertexSource, const std::string& fragmentSource)
+	{
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None: HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLShader>(vertexSource, fragmentSource);
 		}
 
 		HZ_CORE_ASSERT(false, "Unknown Renderer api!");

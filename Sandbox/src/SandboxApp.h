@@ -28,11 +28,10 @@ private:
 	float m_BGColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f }; // { 0.1f, 0.1f, 0.1f, 0.1f }
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture, m_HLogoTexture;
-	Hazel::Ref<Hazel::Shader> m_Shader, m_SquareShader, m_TextureShader;
-	Hazel::Ref<Hazel::VertexArray> m_VertexArray, m_SquareVertexArray;
+	Hazel::Ref<Hazel::Shader> m_TriangleShader, m_SquareShader, m_TextureShader;
+	Hazel::Ref<Hazel::VertexArray> m_TriangleVertexArray, m_SquareVertexArray;
 	
 	Hazel::OrthographicCamera m_OrthoCamera;
-	Hazel::PerspectiveCamera m_PerspectiveCamera;
 	glm::vec3 m_CameraPositionOrtho;
 	glm::vec3 m_CameraPositionPerspective;
 	float m_CameraSpeed = 5.0f;
