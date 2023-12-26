@@ -22,7 +22,7 @@ Sandbox::~Sandbox()
 }
 
 ExampleLayer::ExampleLayer()
-	: Layer("SandboxApp"), m_OrthoCamera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPositionOrtho(0, 0, 0), m_CameraPositionPerspective(0, 0, 1), m_SquarePosition(0, 0, 0)
+	: Layer("SandboxApp"), m_CameraController(1280.0f / 720.0f, true)
 {
 	
 #pragma region triangle
@@ -74,59 +74,33 @@ ExampleLayer::ExampleLayer()
 
 #pragma endregion
 
-	m_TriangleShader = Hazel::Shader::Create("assets/shaders/triangle.glsl");
+	m_TriangleShader = Hazel::Shader::Create("assets/shaders/Triangle.glsl");
 
-	m_SquareShader = Hazel::Shader::Create("assets/shaders/simpleSquare.glsl");
+	m_SquareShader = Hazel::Shader::Create("assets/shaders/SimpleSquare.glsl");
 
-	m_TextureShader = Hazel::Shader::Create("assets/shaders/texture.glsl");
+	auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 	m_Texture = Hazel::Texture2D::Create("assets/textures/checkerboard-pattern615x615.jpg");
 
 	m_HLogoTexture = Hazel::Texture2D::Create("assets/textures/H_circle.png");
 
-	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->Bind();
-	std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->UploadUniform("u_Texture", 0);
+	std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->Bind();
+	std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->UploadUniform("u_Texture", 0);
 
 }
 
 void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 {
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
-		m_CameraPositionOrtho.x -= m_CameraSpeed * ts;
-	else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
-		m_CameraPositionOrtho.x += m_CameraSpeed * ts;
+	// update
+	m_CameraController.OnUpdate(ts);
 
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_DOWN))
-		m_CameraPositionOrtho.y -= m_CameraSpeed * ts;
-	else if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
-		m_CameraPositionOrtho.y += m_CameraSpeed * ts;
-
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
-		m_CameraPositionOrtho.x -= m_CameraSpeed * ts;
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
-		m_CameraPositionOrtho.x += m_CameraSpeed * ts;
-
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_S))
-		m_CameraPositionOrtho.y -= m_CameraSpeed * ts;
-	else if (Hazel::Input::IsKeyPressed(HZ_KEY_W))
-		m_CameraPositionOrtho.y += m_CameraSpeed * ts;
-
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_Q))
-		m_CameraRotation += m_CameraRotationSpeed * ts;
-	else if (Hazel::Input::IsKeyPressed(HZ_KEY_E))
-		m_CameraRotation -= m_CameraRotationSpeed * ts;
-
-
-	Hazel::RenderCommand::SetClearColor({ m_BGColor[0], m_BGColor[1], m_BGColor[2], m_BGColor[3] });
+	// render
+	Hazel::RenderCommand::SetClearColor(m_BackgroundColor);
 	Hazel::RenderCommand::Clear();
 
-	m_OrthoCamera.SetPosition(m_CameraPositionOrtho);
-	m_OrthoCamera.SetRotation(m_CameraRotation);
-
-	Hazel::Renderer::BeginScene(m_OrthoCamera);
+	Hazel::Renderer::BeginScene(m_CameraController.GetCamera());
 
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-
 
 	glm::vec4 redColor(1.0f, 0.3f, 0.2f, 1.0f);
 	glm::vec4 blueColor(0.2f, 0.3f, 1.0f, 1.0f);
@@ -145,11 +119,12 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 	}
 	
 	m_Texture->Bind();
-	m_TextureShader->Bind();
-	Hazel::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+	auto textureShader = m_ShaderLibrary.Get("Texture");
+	textureShader->Bind();
+	Hazel::Renderer::Submit(textureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 	m_HLogoTexture->Bind();
-	Hazel::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+	Hazel::Renderer::Submit(textureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 	//Triangle rendering
 	Hazel::Renderer::Submit(m_TriangleShader, m_TriangleVertexArray); // triangle 
@@ -159,17 +134,16 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 
 void ExampleLayer::OnImGuiRender()
 {
-	
 	ImGui::Begin("Sandbox app");
-	ImGui::ColorEdit4("color", m_BGColor);
+	ImGui::ColorEdit4("color", glm::value_ptr(m_BackgroundColor));
 	ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
 	ImGui::End();
-	
-	
 }
 
-void ExampleLayer::OnEvent(Hazel::Event& e)
+void ExampleLayer::OnEvent(Hazel::Event& e) 
 {
+	m_CameraController.OnEvent(e);
+
 	Hazel::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Hazel::KeyPressedEvent>(HZ_BIND_EVENT_FN(ExampleLayer::OnKeyPressedEvent));
 }

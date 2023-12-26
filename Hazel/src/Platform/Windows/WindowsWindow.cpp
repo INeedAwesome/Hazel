@@ -6,7 +6,6 @@
 #include "Hazel/Events/KeyEvent.h"
 
 #include "Platform/OpenGL/OpenGLContext.h"
-#include "Platform/DirectX11/DirectX11Context.h"
 
 namespace Hazel {
 
@@ -46,9 +45,6 @@ namespace Hazel {
 		glfwWindowHint(GLFW_SAMPLES, 8);
 		if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-		
-		else if (RendererAPI::GetAPI() == RendererAPI::API::DirectX11)
-			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		HZ_CORE_ASSERT(m_Window, "Could not create GLFW window!");
@@ -56,7 +52,6 @@ namespace Hazel {
 		{
 			case RendererAPI::API::None:		{ m_Context = new OpenGLContext(m_Window);		break; }
 			case RendererAPI::API::OpenGL:		{ m_Context = new OpenGLContext(m_Window);		break; }
-			case RendererAPI::API::DirectX11:	{ m_Context = new DirectX11Context(m_Window);	break; }
 
 		}
 		m_Context->Init(props);

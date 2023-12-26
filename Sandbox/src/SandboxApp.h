@@ -25,22 +25,15 @@ public:
 	bool OnKeyPressedEvent(Hazel::KeyPressedEvent& event);
 private:
 
-	float m_BGColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f }; // { 0.1f, 0.1f, 0.1f, 0.1f }
 
+	Hazel::OrthographicCameraController m_CameraController;
+
+	Hazel::ShaderLibrary m_ShaderLibrary;
 	Hazel::Ref<Hazel::Texture2D> m_Texture, m_HLogoTexture;
-	Hazel::Ref<Hazel::Shader> m_TriangleShader, m_SquareShader, m_TextureShader;
+	Hazel::Ref<Hazel::Shader> m_TriangleShader, m_SquareShader;
 	Hazel::Ref<Hazel::VertexArray> m_TriangleVertexArray, m_SquareVertexArray;
-	
-	Hazel::OrthographicCamera m_OrthoCamera;
-	glm::vec3 m_CameraPositionOrtho;
-	glm::vec3 m_CameraPositionPerspective;
-	float m_CameraSpeed = 5.0f;
-	float m_CameraRotation = 0.0f;
-	float m_CameraRotationSpeed = 45.0f;
 
-	float m_SquareSpeed = 1.0f;
-	glm::vec3 m_SquarePosition;
-
+	glm::vec4 m_BackgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 1.0f };
 
 };
