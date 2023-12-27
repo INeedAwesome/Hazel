@@ -34,7 +34,7 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	
 	Hazel::Renderer2D::DrawQuad({ -1.0f, 0 }, { 1, 1 }, { 1, 0, 0, 1 });
 	Hazel::Renderer2D::DrawQuad({ 2.0f, 3.0f }, { 40, 2 }, { 0, 1, 0, 1 });
-	Hazel::Renderer2D::DrawQuad({ -10.0f, 5.0f, -0.1f }, { 10, 10 }, m_Texture);
+	Hazel::Renderer2D::DrawQuad({ -10.0f, 5.0f, -0.1f }, { 10, 10 }, m_Texture, { 0.5f, 0.5f, 1.0f, 1 });
 	
 	Hazel::Renderer::EndScene();
 }
