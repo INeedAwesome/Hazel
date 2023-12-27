@@ -14,7 +14,7 @@
 	#include "backends/imgui_impl_opengl3.h"
 #endif // HZ_OPENGL
 
-#include "Hazel/Application.h"
+#include "Hazel/Core/Application.h"
 
 //temporary
 #include <GLFW/glfw3.h>

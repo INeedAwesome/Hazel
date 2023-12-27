@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Hazel/Window.h"
+#include "Hazel/Core/Window.h"
 #include "Hazel/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
@@ -44,8 +44,8 @@ namespace Hazel {
 		struct WindowData
 		{
 			std::string Title;
-			unsigned int Width, Height;
-			bool VSync;
+			uint32_t Width = 0, Height = 0;
+			bool VSync = true;
 			EventCallbackFn EventCallback;
 		};
 

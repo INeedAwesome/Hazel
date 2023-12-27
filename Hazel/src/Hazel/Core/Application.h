@@ -3,7 +3,7 @@
 #include "Core.h"
 
 #include "Window.h"
-#include "Hazel/LayerStack.h"
+#include "Hazel/Core/LayerStack.h"
 #include "Hazel/Events/Event.h"
 #include "Hazel/Events/ApplicationEvent.h"
 
@@ -40,7 +40,7 @@ namespace Hazel {
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
-		bool m_Minimized = true;
+		bool m_Minimized = false;
 		LayerStack m_LayerStack;
 	
 	};
