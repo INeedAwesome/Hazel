@@ -1,5 +1,9 @@
 #include "SandboxApp.h"
 
+// ---------- Entry Point ------------------
+#include "Hazel/Core/EntryPoint.h"
+// -----------------------------------------
+
 #include "Platform/OpenGL/OpenGLShader.h"
 
 #include "imgui/imgui.h"
@@ -15,7 +19,8 @@ Hazel::Application* Hazel::CreateApplication()
 
 Sandbox::Sandbox()
 {
-	PushLayer(new ExampleLayer());
+	//PushLayer(new ExampleLayer());
+	PushLayer(new Sandbox2D());
 }
 Sandbox::~Sandbox()
 {

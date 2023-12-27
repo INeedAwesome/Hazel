@@ -4,6 +4,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Sandbox2D.h"
+
 class Sandbox : public Hazel::Application
 {
 public:
