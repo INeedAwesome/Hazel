@@ -27,9 +27,9 @@ namespace Hazel {
 
 #pragma endregion
 
-		inline static void Resize(int width, int height)
+		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 		{
-			s_RendererAPI->Resize(width, height);
+			s_RendererAPI->SetViewport(x, y, width, height);
 		}
 
 #pragma region draw

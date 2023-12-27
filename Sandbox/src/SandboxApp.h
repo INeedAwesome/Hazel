@@ -23,9 +23,8 @@ public:
 	virtual void OnEvent(Hazel::Event& e) override;
 
 	bool OnKeyPressedEvent(Hazel::KeyPressedEvent& event);
+
 private:
-
-
 	Hazel::OrthographicCameraController m_CameraController;
 
 	Hazel::ShaderLibrary m_ShaderLibrary;

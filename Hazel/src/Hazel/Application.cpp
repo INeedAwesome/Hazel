@@ -43,8 +43,11 @@ namespace Hazel {
 			Timestep timestep = time - lastFrameTime;
 			lastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(timestep);
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(timestep);
+			}
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
@@ -94,8 +97,16 @@ namespace Hazel {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
-		RenderCommand::Resize(e.GetWidth(), e.GetHeight());
-		return true;
+		if (e.GetWidth() == 0 || e.GetHeight())
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		
+		return false;
 	}
 
 	void Application::Stop()
