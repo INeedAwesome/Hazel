@@ -53,6 +53,41 @@ namespace Hazel {
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::Set(const std::string& name, int32_t value)
+	{
+		UploadUniform(name, value);
+	}
+
+	void OpenGLShader::Set(const std::string& name, float value)
+	{
+		UploadUniform(name, value);
+	}
+
+	void OpenGLShader::Set(const std::string& name, glm::vec2 value)
+	{
+		UploadUniform(name, value);
+	}
+
+	void OpenGLShader::Set(const std::string& name, glm::vec3 value)
+	{
+		UploadUniform(name, value);
+	}
+
+	void OpenGLShader::Set(const std::string& name, glm::vec4 value)
+	{
+		UploadUniform(name, value);
+	}
+
+	void OpenGLShader::Set(const std::string& name, glm::mat3 value)
+	{
+		UploadUniform(name, value);
+	}
+
+	void OpenGLShader::Set(const std::string& name, glm::mat4 value)
+	{
+		UploadUniform(name, value);
+	}
+
 	void OpenGLShader::UploadUniform(const std::string& name, int32_t value)
 	{
 		int location = GetUniformLocation(name.c_str());

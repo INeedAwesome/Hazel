@@ -20,6 +20,14 @@ namespace Hazel {
 
 		virtual const std::string& GetName() const { return m_Name; };
 
+		virtual void Set(const std::string& name, int32_t value) override;
+		virtual void Set(const std::string& name, float value) override;
+		virtual void Set(const std::string& name, glm::vec2 value) override;
+		virtual void Set(const std::string& name, glm::vec3 value) override;
+		virtual void Set(const std::string& name, glm::vec4 value) override;
+		virtual void Set(const std::string& name, glm::mat3 value) override;
+		virtual void Set(const std::string& name, glm::mat4 value) override;
+
 		void UploadUniform(const std::string& name, int32_t value);
 		void UploadUniform(const std::string& name, float value);
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace Hazel {
 
@@ -13,6 +14,14 @@ namespace Hazel {
 		virtual void Unbind() const = 0;
 
 		virtual const std::string& GetName() const = 0;
+
+		virtual void Set(const std::string& name, int32_t value) = 0;
+		virtual void Set(const std::string& name, float value) = 0;
+		virtual void Set(const std::string& name, glm::vec2 value) = 0;
+		virtual void Set(const std::string& name, glm::vec3 value) = 0;
+		virtual void Set(const std::string& name, glm::vec4 value) = 0;
+		virtual void Set(const std::string& name, glm::mat3 value) = 0;
+		virtual void Set(const std::string& name, glm::mat4 value) = 0;
 
 		static Ref<Shader> Create(const std::string& filepath);
 		static Ref<Shader> Create(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource);

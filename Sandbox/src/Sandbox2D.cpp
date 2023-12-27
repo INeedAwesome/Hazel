@@ -13,28 +13,7 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-
-	m_SquareVertexArray = Hazel::VertexArray::Create();
-	float sqaureVertices[3 * 4] = {
-		 -0.5f, -0.5f, 0.0f,
-		  0.5f, -0.5f, 0.0f,
-		  0.5f,  0.5f, 0.0f,
-		 -0.5f,  0.5f, 0.0f
-	};
-	Hazel::Ref<Hazel::VertexBuffer> squareVertexBuffer;
-	squareVertexBuffer = Hazel::VertexBuffer::Create(sqaureVertices, sizeof(sqaureVertices));
-	squareVertexBuffer->SetLayout({
-		{ Hazel::ShaderDataType::Float3, "a_Position" }
-		});
-	m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
-
-	unsigned int sqaureIndices[6] = { 0, 1, 2, 2, 3, 0 };
-	Hazel::Ref<Hazel::IndexBuffer> squareIndexBuffer;
-	squareIndexBuffer = Hazel::IndexBuffer::Create(sqaureIndices, sizeof(sqaureIndices) / sizeof(unsigned int));
-	m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
-
-	m_ShaderLibrary.Load("assets/shaders/FlatColor.glsl");
-
+	m_Texture = Hazel::Texture2D::Create("assets/textures/checkerboard-pattern615x615.jpg");
 }
 
 void Sandbox2D::OnDetach()
@@ -51,16 +30,13 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	Hazel::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
 	Hazel::RenderCommand::Clear();
 
-	Hazel::Renderer::BeginScene(m_CameraController.GetCamera());
-
-	auto flatColorShader = m_ShaderLibrary.Get("FlatColor");
-	std::dynamic_pointer_cast<Hazel::OpenGLShader>(flatColorShader)->Bind();
-	std::dynamic_pointer_cast<Hazel::OpenGLShader>(flatColorShader)->UploadUniform("u_Color", m_SquareColor);
-
-	Hazel::Renderer::Submit(flatColorShader, m_SquareVertexArray);
+	Hazel::Renderer2D::BeginScene(m_CameraController.GetCamera());
+	
+	Hazel::Renderer2D::DrawQuad({ -1.0f, 0 }, { 1, 1 }, { 1, 0, 0, 1 });
+	Hazel::Renderer2D::DrawQuad({ 2.0f, 3.0f }, { 40, 2 }, { 0, 1, 0, 1 });
+	Hazel::Renderer2D::DrawQuad({ -10.0f, 5.0f, -0.1f }, { 10, 10 }, m_Texture);
 	
 	Hazel::Renderer::EndScene();
-
 }
 
 void Sandbox2D::OnImGuiRender()

@@ -21,6 +21,7 @@ private:
 
 	// temporary
 	Hazel::Ref<Hazel::VertexArray> m_SquareVertexArray;
+	Hazel::Ref<Hazel::Texture2D> m_Texture;
 
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 1.0f };
 
