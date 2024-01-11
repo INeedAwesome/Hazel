@@ -12,6 +12,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "SandboxPong.h"
+
 Hazel::Application* Hazel::CreateApplication()
 { 
 	return new Sandbox();
@@ -20,7 +22,7 @@ Hazel::Application* Hazel::CreateApplication()
 Sandbox::Sandbox()
 {
 	//PushLayer(new ExampleLayer());
-	PushLayer(new Sandbox2D());
+	PushLayer(new SandboxPong());
 }
 Sandbox::~Sandbox()
 {
