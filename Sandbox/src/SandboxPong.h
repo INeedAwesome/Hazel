@@ -15,12 +15,19 @@ public:
 	virtual void OnImGuiRender() override;
 	virtual void OnEvent(Hazel::Event& e) override;
 
+	void ResetGame();
 	void MoveBall(Hazel::Timestep ts);
 	void CheckCollisionForBall(Hazel::Timestep ts);
 
 private:
 	Hazel::OrthographicCameraController m_CameraController;
-	Hazel::ShaderLibrary m_ShaderLibrary;
+
+	bool m_Playing = false;
+
+	uint32_t m_PlayerLeftPoints = 0;
+	uint32_t m_PlayerRightPoints = 0;
+
+	float m_BallSpeed = 1.5f;
 
 	bool m_BallLeft = true;
 	bool m_BallUp = true;
